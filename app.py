@@ -1,21 +1,21 @@
-
 import streamlit as st
 import joblib
 
-# Load model
-model = joblib.load('sentiment_model.pkl')
+# Load model dan vectorizer
+model = joblib.load("random_forest_model.pkl")
+vectorizer = joblib.load("vectorizer.pkl")
 
-# Judul
-st.title("🧠 Analisis Sentimen untuk Prediksi Tren Pasar")
-st.write("Masukkan teks dari sosial media dan lihat prediksi arah pasar.")
+# Tampilan web
+st.title("📊 Analisis Sentimen Media Sosial untuk Prediksi Tren Pasar")
+st.write("Model ini menggunakan Random Forest untuk memprediksi sentimen dari judul postingan sosial media (Reddit).")
 
-# Input
-user_input = st.text_area("📝 Masukkan teks")
+# Input teks
+user_input = st.text_area("Masukkan teks (judul posting Reddit atau berita saham):", "")
 
-if st.button("🔍 Prediksi"):
-    if user_input.strip():
-        pred = model.predict([user_input])[0]
-        label = "📈 POSITIF (Bullish)" if pred == 1 else "📉 NEGATIF (Bearish)"
-        st.success(f"Hasil Prediksi: {label}")
+if st.button("Prediksi Sentimen"):
+    if user_input.strip() == "":
+        st.warning("Silakan masukkan teks terlebih dahulu.")
     else:
-        st.warning("Teks tidak boleh kosong.")
+        text_vector = vectorizer.transform([user_input])
+        prediction = model.predict(text_vector)[0]
+        st.success(f"Prediksi Sentimen: **{prediction.upper()}**")
